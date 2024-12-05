@@ -29,7 +29,8 @@ class TrafficSignalEnv:
 
     def get_state(self):
         vehicle_count = traci.vehicle.getIDCount()
-        return np.array([vehicle_count, self.num_vehicles])
+        queue_length = traci.lane.getLastStepHaltingNumber("lane_0")
+        return np.array([vehicle_count, self.num_vehicles, queue_length])
 
     def change_traffic_signal(self, action):
         if action == 0:
