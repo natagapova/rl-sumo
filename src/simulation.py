@@ -33,15 +33,17 @@ class TrafficSignalEnv:
         return np.array([vehicle_count, self.num_vehicles, queue_length])
 
     def change_traffic_signal(self, action):
-        if action == 0:
-            traci.trafficlight.setRedYellowGreenState("junction_0", "rrrrrrGGGGGG")
-        elif action == 1:
-            traci.trafficlight.setRedYellowGreenState("junction_0", "GGGGGGrrrrrr")
+        junctions = [f"junction_{i}" for i in range(9)]
+        states = ["rrrrrrGGGGGG", "GGGGGGrrrrrr"]
+
+        if action < 2:
+            traci.trafficlight.setRedYellowGreenState(junctions[0], states[action])
         else:
-            traci.trafficlight.setRedYellowGreenState("junction_0", "rrrrrGGGGGG")
+            junction_index = (action - 2) // 2
+            state_index = (action - 2) % 2
+            traci.trafficlight.setRedYellowGreenState(junctions[junction_index], states[state_index])
 
     def calculate_reward(self):
-        # Example reward calculation (you can customize this)
-        queue_length = traci.lane.getLastStepHaltingNumber("lane_0")
-        reward = -queue_length
+        cars_finished = traci.simulation.getMinExpectedNumber()
+        reward = -cars_finished
         return reward
