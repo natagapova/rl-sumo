@@ -8,12 +8,15 @@ path_to_cfg = os.path.abspath(relative_path_to_cfg)
 
 
 def runSimulation():
-    traci.start(["sumo-gui", "-c", path_to_cfg])
+    traci.start(["sumo", "-c", path_to_cfg])
 
-    while traci.simulation.getMinExpectedNumber() > 0:
+    step = 0
+    while step < 300:
         traci.simulationStep()
-        time.sleep(0.1)
-    
+        step += 1
+        
+        print(f"{traci.simulation.getMinExpectedNumber()}")
+
     traci.close()
 
 
